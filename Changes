@@ -1,6 +1,10 @@
 Revision history for CPAN-Mini-Inject
 
-0.13    01/05/2005
+0.15    01/06/2005
+        - Decreased the size of t/read/authors/01mailrc.txt.gz reducing
+          greatly the size of the package.
+
+0.14    01/05/2005
         - Added an optional filename parameter to parsecfg. This allows
           calling parsecfg without having to previously call loadcfg
           (tests added as required).
