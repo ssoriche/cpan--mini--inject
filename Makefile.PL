@@ -12,7 +12,7 @@ WriteMakefile(
         'Test::More' => 0,
         'LWP::Simple' => 0,
         'CPAN::Checksums' => 0,
-        'CPAN::Mini' => 0.24,
+        'CPAN::Mini' => 0.32,
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'CPAN-Mini-Inject-*' },

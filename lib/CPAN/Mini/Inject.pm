@@ -17,11 +17,11 @@ CPAN::Mini::Inject - Inject modules into a CPAN::Mini mirror.
 
 =head1 Version
 
-Version 0.12
+Version 0.13
 
 =cut
 
-our $VERSION = '0.12';
+our $VERSION = '0.13';
 our @ISA=qw( CPAN::Mini );
 
 =head1 Synopsis
@@ -150,10 +150,13 @@ If either local or remote are not defined parsecfg croaks.
 
 sub parsecfg {
   my $self=shift;
+  my $cfgfile=shift;
   
   delete $self->{config} if(defined($self->{config}));
 
   my %required=( local => 1, remote => 1 );
+
+  $self->loadcfg($cfgfile) unless($self->{cfgfile});
 
   if(-r $self->{cfgfile}) {
     open(CFGFILE,$self->{cfgfile});
@@ -230,7 +233,7 @@ sub update_mirror {
 
   $options{dirmode}||=oct($self->_cfg('dirmode')||sprintf('%04o',0777 & umask()));
 
-  ref($self)->SUPER::update_mirror( %options );
+  $self->SUPER::update_mirror( %options );
 }
 
 =head2 add()
