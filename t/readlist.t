@@ -27,6 +27,7 @@ is(@{$mcpi->{modulelist}},3,'Read modulelist');
 SKIP: {
   eval  { use Test::Exception };
   skip 'Test::Exception not installed', 1 if $@;
+  skip 'User is superuser and can always read', 1 if $< == 0;
   use Test::Exception;
 
   $mcpi=CPAN::Mini::Inject->new;
