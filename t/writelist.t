@@ -20,10 +20,9 @@ is(@{$mcpi->{modulelist}},4,'Updated memory modulelist');
 ok($mcpi->writelist,'Write modulelist');
 
 SKIP: {
-  eval "use Test::Exception";
+  eval { use Test::Exception };
   skip 'Test::Exception not installed', 1 if $@;
   skip 'User is superuser and can always write', 1 if $< == 0;
-  use Test::Exception;
 
   $mcpi=CPAN::Mini::Inject->new;
   $mcpi->loadcfg('t/.mcpani/config_nowrite')

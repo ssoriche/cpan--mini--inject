@@ -26,18 +26,16 @@ SKIP: {
 # the ->parsecfg
 
 SKIP: {
-  eval "use Test::Exception";
+  eval { use Test::Exception };
   skip "Test::Exception not installed", 2 if $@;
-  use Test::Exception;
 
   dies_ok { $mcpi->add( module => 'CPAN::Mini::Inject', authorid => 'SSORICHE', version => '0.01' ) } 'Missing add param';
   dies_ok { $mcpi->add( module => 'CPAN::Mini::Inject', authorid => 'SSORICHE', version => '0.01', file => 'blahblah' ) } 'Module file not readable';
 }
 
 SKIP: {
-  eval "use Test::Exception";
+  eval { use Test::Exception };
   skip "Test::Exception not installed", 1 if $@;
-  use Test::Exception;
 
   $mcpi->loadcfg('t/.mcpani/config_norepo')
        ->parsecfg;
@@ -46,9 +44,8 @@ SKIP: {
 }
 
 SKIP: {
-  eval "use Test::Exception";
+  eval { use Test::Exception };
   skip "Test::Exception not installed", 1 if $@;
-  use Test::Exception;
 
   $mcpi->loadcfg('t/.mcpani/config_read')
        ->parsecfg;

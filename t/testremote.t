@@ -35,9 +35,8 @@ is($mcpi->{site},$server->url);
 $server->stop;
 
 SKIP: {
-  eval "use Test::Exception";
+  eval { use Test::Exception };
   skip 'Test::Exception not installed', 1 if $@;
-  use Test::Exception;
 
   $mcpi->{config}{remote}="ftp://blahblah http://blah blah";
   dies_ok { $mcpi->testremote } 'No reachable site';

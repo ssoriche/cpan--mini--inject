@@ -1,8 +1,10 @@
 Revision history for CPAN-Mini-Inject
 
-0.12    01/03/2005
+0.12    01/04/2005
         - Tests failed for inject and add on Windows systems. These tests
           have now been skipped.
+        - Reverted all tests to use eval{}. Using eval "" caused problems
+          on Windows, while eval{} only caused problems on one AIX box.
 
 0.10    12/30/2004
         - Fixed dirmode in inject(), add(), writelist(), so that all files

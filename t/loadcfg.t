@@ -24,9 +24,8 @@ my $mcpi=CPAN::Mini::Inject->new;
 SKIP: {
   skip 'Config file exists', 1 if(chkcfg());
 
-  eval "use Test::Exception";
+  eval { use Test::Exception };
   skip 'Test::Exception not installed',1 if $@;
-  use Test::Exception;
 
   dies_ok {$mcpi->loadcfg} 'No config file';
 }
