@@ -3,6 +3,7 @@ MANIFEST
 README
 META.yml # Will be created by "make dist"
 Makefile.PL
+TODO
 bin/mcpani
 lib/CPAN/Mini/Inject.pm
 t/.mcpani/config
