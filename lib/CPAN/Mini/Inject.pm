@@ -18,11 +18,11 @@ CPAN::Mini::Inject - Inject modules into a CPAN::Mini mirror.
 
 =head1 Version
 
-Version 0.03
+Version 0.04
 
 =cut
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 our @ISA=qw( CPAN::Mini );
 
 =head1 Synopsis
@@ -320,7 +320,7 @@ sub inject {
     mkpath( [ dirname($target) ] ); 
     copy($source,dirname($target)) 
       or croak "Copy $source to ".dirname($target)." failed: $!";
-    print "$file ... injected\n" if($verbose);
+    print "$target ... injected\n" if($verbose);
   }
 
   foreach my $dir (keys(%updatedir)) {

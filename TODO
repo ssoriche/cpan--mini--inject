@@ -8,3 +8,6 @@
 - Add a method to remove packages from the repository
 
 - Use the filename given to extract module name and version.
+
+- Add testing for verbose modes (check STDOUT to make sure the output is
+correct).

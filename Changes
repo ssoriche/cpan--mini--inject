@@ -1,8 +1,10 @@
 Revision history for CPAN-Mini-Inject
 
-0.03    11/05/2004
+0.04    11/05/2004
 
-        - testremote now accepts a true parameter to enable verbose mode 
+        - inject accepts a true parameter to enable verbose mode which
+          lists modules as they are injected.
+        - testremote accepts a true parameter to enable verbose mode 
           which display the site being tested, and which is selected.
         - Added --passive switch to mcpani to enable passive ftp
         - Minor updates to perldoc in mcpani
