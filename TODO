@@ -1,13 +1,9 @@
-- to update_mirror add the option for specifying a umask or use the
-  current system umask as the default. This overides the way
-  CPAN::Mini works.
-
 - Add logging to a file all the updates that are occuring (verbose mode
   to a file).
 
 - Add a method to remove packages from the repository
 
-- Use the filename given to extract module name and version.
-
 - Add testing for verbose modes (check STDOUT to make sure the output is
 correct).
+
+- Use dirmode when inject modules into the CPAN::Mini repository

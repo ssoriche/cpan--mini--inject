@@ -18,7 +18,7 @@ CPAN::Mini::Inject - Inject modules into a CPAN::Mini mirror.
 
 =head1 Version
 
-Version 0.07
+Version 0.08
 
 =cut
 
