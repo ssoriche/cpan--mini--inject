@@ -1,8 +1,9 @@
-use Test::More tests => 3;
+use Test::More tests => 6;
 
 use CPAN::Mini::Inject;
 use File::Path;
 use File::Copy;
+use File::Basename;
 
 rmtree( [ 't/local/MYCPAN/modulelist' ] ,0,1);
 copy('t/local/CPAN/modules/02packages.details.txt.gz.bak','t/local/CPAN/modules/02packages.details.txt.gz');
@@ -22,6 +23,10 @@ $mcpi->loadcfg('t/.mcpani/config')
 ok($mcpi->inject,'Copy modules');
 ok(-e "t/local/CPAN/authors/id/$module",'Module file exists');
 ok(-e 't/local/CPAN/authors/id/S/SS/SSORICHE/CHECKSUMS','Checksum created');
+
+is((stat("t/local/CPAN/authors/id/$module"))[2] & 07777,0664,'Module file mode set');
+is((stat(dirname("t/local/CPAN/authors/id/$module")))[2] & 07777,0775,'Author directory mode set');
+is((stat('t/local/CPAN/authors/id/S/SS/SSORICHE/CHECKSUMS'))[2] & 07777,0664,'Checksum file mode set');
 
 unlink('t/local/CPAN/authors/id/S/SS/SSORICHE/CHECKSUMS');
 unlink("t/local/CPAN/authors/id/$module");

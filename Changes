@@ -1,5 +1,10 @@
 Revision history for CPAN-Mini-Inject
 
+0.08    12/29/2004
+        - Fixed dirmode in inject(), add(), writelist(), so that all files
+          created are set with the correct permissions.
+        - Added tests for directory and file modes.
+
 0.08    12/08/2004
         - Tests were found to fail on AIX which contained eval{}, all
           tests updated with eval "".

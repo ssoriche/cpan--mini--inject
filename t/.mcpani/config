@@ -1,3 +1,4 @@
 local: t/local/CPAN
 remote : http://www.cpan.org
 repository: t/local/MYCPAN
+dirmode: 0775
