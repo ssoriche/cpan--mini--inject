@@ -5,5 +5,3 @@
 
 - Add testing for verbose modes (check STDOUT to make sure the output is
 correct).
-
-- Use dirmode when inject modules into the CPAN::Mini repository
