@@ -1,6 +1,6 @@
 Revision history for CPAN-Mini-Inject
 
-0.05    11/10/2004
+0.06    11/10/2004
 
         - mcpani now parses the file passed to it to determine module name
           and version. Command line options override the parsing.
