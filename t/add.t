@@ -20,7 +20,7 @@ ok(grep(/$module/,@{$mcpi->{modulelist}}),'Module added to list');
 # the ->parsecfg
 
 SKIP: {
-  eval { use Test::Exception };
+  eval "use Test::Exception";
   skip "Test::Exception not installed", 2 if $@;
   use Test::Exception;
 
@@ -29,7 +29,7 @@ SKIP: {
 }
 
 SKIP: {
-  eval { use Test::Exception };
+  eval "use Test::Exception";
   skip "Test::Exception not installed", 1 if $@;
   use Test::Exception;
 
@@ -40,7 +40,7 @@ SKIP: {
 }
 
 SKIP: {
-  eval { use Test::Exception };
+  eval "use Test::Exception";
   skip "Test::Exception not installed", 1 if $@;
   use Test::Exception;
 
