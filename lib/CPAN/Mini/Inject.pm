@@ -468,6 +468,10 @@ sub _cfg {
   $_[0]->{config}{$_[1]} 
 }
 
+=head1 See Also
+
+L<CPAN::Mini>
+
 =head1 Author
 
 Shawn Sorichetti, C<< <ssoriche@coloredblocks.net> >>
