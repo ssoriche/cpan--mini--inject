@@ -16,8 +16,11 @@ ok(-r 't/local/MYCPAN/authors/id/S/SS/SSORICHE/CPAN-Mini-Inject-0.01.tar.gz','Ad
 my $module="CPAN::Mini::Inject                 0.01  S/SS/SSORICHE/CPAN-Mini-Inject-0.01.tar.gz";
 ok(grep(/$module/,@{$mcpi->{modulelist}}),'Module added to list');
 
-is((stat('t/local/MYCPAN/authors/id/S/SS/SSORICHE'))[2] & 07777,0775,'Added author directory mode is 0775');
-is((stat('t/local/MYCPAN/authors/id/S/SS/SSORICHE/CPAN-Mini-Inject-0.01.tar.gz'))[2] & 07777,0664,'Added module mode is 0664');
+SKIP: {
+  skip "Not a UNIX system", 2 if($^O =~ /^Win/);
+  is((stat('t/local/MYCPAN/authors/id/S/SS/SSORICHE'))[2] & 07777,0775,'Added author directory mode is 0775');
+  is((stat('t/local/MYCPAN/authors/id/S/SS/SSORICHE/CPAN-Mini-Inject-0.01.tar.gz'))[2] & 07777,0664,'Added module mode is 0664');
+}
 
 # XXX do the same test as above again, but this time with a ->readlist after
 # the ->parsecfg

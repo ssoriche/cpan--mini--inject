@@ -229,7 +229,7 @@ sub update_mirror {
   $self->testremote($options{trace}) unless($self->{site});
   $options{remote}||=$self->{site};
 
-  $options{dirmode}||=oct($self->_cfg('dirmode')||sprintf('%04o',0777 &~ umask()));
+  $options{dirmode}||=oct($self->_cfg('dirmode')||sprintf('%04o',0777 & umask()));
 
   ref($self)->SUPER::update_mirror( %options );
 }
