@@ -17,11 +17,11 @@ CPAN::Mini::Inject - Inject modules into a CPAN::Mini mirror.
 
 =head1 Version
 
-Version 0.16
+Version 0.17
 
 =cut
 
-our $VERSION = '0.16';
+our $VERSION = '0.17';
 our @ISA=qw( CPAN::Mini );
 
 =head1 Synopsis
@@ -512,9 +512,9 @@ sub _mkpath {
 sub _fmtmodule {
   my ($module,$file,$version)=@_;
 
-  $module.=' ' while(length($module)+length($version) < 39);
+  $module.=' ' while(length($module)+length($version) < 38);
 
-  return $module.$version."  $file";
+  return "$module $version  $file";
 }
 
 sub _cfg { 
