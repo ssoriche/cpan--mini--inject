@@ -6,7 +6,7 @@ use Getopt::Long;
 use CPAN::Mini::Inject;
 use Env;
 
-our $VERSION = '0.03';
+our $VERSION = '0.05';
 our %options=();
 
 sub print_version {
