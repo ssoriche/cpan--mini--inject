@@ -298,10 +298,14 @@ Insert modules from the repository into the local CPAN::Mini mirror. inject
 copies each module into the appropriate directory in the CPAN::Mini mirror
 and updates the CHECKSUMS file.
 
+Passing a value to C<inject> enables verbose mode, which lists each module
+as it's injected.
+
 =cut
 
 sub inject {
   my $self=shift;
+  my $verbose=shift;
 
   $self->readlist unless(exists($self->{modulelist}));
 
@@ -316,6 +320,7 @@ sub inject {
     mkpath( [ dirname($target) ] ); 
     copy($source,dirname($target)) 
       or croak "Copy $source to ".dirname($target)." failed: $!";
+    print "$file ... injected\n" if($verbose);
   }
 
   foreach my $dir (keys(%updatedir)) {
