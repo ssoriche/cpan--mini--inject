@@ -1,6 +1,6 @@
 Revision history for CPAN-Mini-Inject
 
-0.18
+0.18    04/02/2005
         - Fixed bug number 11718 involving the Line-Count in 
           02packages.details.txt.gz not being updated.
         - Added tests for update_mirror method.
