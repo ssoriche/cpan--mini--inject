@@ -2,15 +2,9 @@
   current system umask as the default. This overides the way
   CPAN::Mini works.
 
-- to mcpani add a command line option to set passive ftp.
-
 - Add logging to a file all the updates that are occuring (verbose mode
   to a file).
 
 - Add a method to remove packages from the repository
 
-- Add verbose messags to testremote, that show when an alternate site
-  has been selected.
-
-- To non-readable, non-writable tests check to see if the UID is 0, as
-  testing for read/write failures with root doesn't work.
+- Use the filename given to extract module name and version.
