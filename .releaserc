@@ -1,4 +1,0 @@
-release_subclass Module::Release::Subversion
-passive_ftp yes
-cpan_user SSORICHE
-sf_user <none>
