@@ -2,6 +2,8 @@ Revision history for CPAN-Mini-Inject
 
 0.04    11/05/2004
 
+        - t/readlist.t and t/writelist.t both skip failure tests if
+          the uid is 0.
         - inject accepts a true parameter to enable verbose mode which
           lists modules as they are injected.
         - testremote accepts a true parameter to enable verbose mode 
