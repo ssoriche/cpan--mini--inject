@@ -332,7 +332,7 @@ sub inject {
   return $self;
 }
 
-=head2 updpackages 
+=head2 updpackages()
 
 Update the CPAN::Mini mirror's modules/02packages.details.txt.gz with the
 injected module information.
