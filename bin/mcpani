@@ -4,8 +4,9 @@ use strict;
 use Pod::Usage 1.12;
 use Getopt::Long;
 use CPAN::Mini::Inject;
+use Env;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 our %options=();
 
 sub print_version {
@@ -79,6 +80,7 @@ GetOptions(
     'v|verbose'     => \$options{verbose},
     'l|local=s'     => \$options{local},
     'r|remote=s'    => \$options{remote},
+    'p|passive'     => \$ENV{FTP_PASSIVE},
     'add'           => sub { setsub('add',\&add) },
     'update'        => sub { setsub('update',\&update) },
     'mirror'        => sub { setsub('mirror',\&mirror) },
@@ -130,6 +132,7 @@ Options:
 
     -l, --local         local location for CPAN::Mini Mirror
     -r, --remote        CPAN mirror to mirror from
+    -p, --passive       Enable passive ftp for mirroring.
     -v, --verbose       verbose output
     -V, --version       Version information.
 
@@ -143,13 +146,13 @@ F<mcpani> is a command-line brief description goes here.
 =head2 --add
 
 Add a module to the repository for later inclusion in the CPAN Mini
-mirror. The add command requires the follow parameters:
+mirror. The add command requires the following parameters:
 
 =over 4
 
 =item --module
 
-This is the package name of the module.
+This is the name of the module (ie CPAN::Mini::Inject).
 
 =item --authorid
 
@@ -177,9 +180,9 @@ C<make tardist>).
 
 =head2 --update
 
-Update the local CPAN Mini mirror from remote then inject the modules
-in the repository. This is the same as running C<mcpani --mirror> then
-C<mcpani --inject>
+Update your local CPAN Mini mirror from a CPAN site. Once completed
+add the modules contained in the repository to it. This is the same 
+as running C<mcpani --mirror> followed by C<mcpani --inject>
 
 =head2 --mirror
 
@@ -192,7 +195,7 @@ Add the repository modules into the CPAN Mini mirror.
 =head2 -l, --local
 
 A local directory to store the CPAN Mini mirror in. Specifying this
-option overides the value in the config file.
+option overrides the value in the config file.
 
 =head2 -r, --remote
 
@@ -225,8 +228,8 @@ location to store local CPAN::Mini mirror (*REQUIRED*)
 
 =item * remote 
 
-CPAN site(s) to mirror from. Multiple sites can be listed space separated. 
-(*REQUIRED*)
+CPAN site(s) to mirror from. Multiple sites can be listed, with spaces
+between them. (*REQUIRED*)
 
 =item * repository
 
