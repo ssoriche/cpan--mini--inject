@@ -1,6 +1,6 @@
 Revision history for CPAN-Mini-Inject
 
-0.07    11/2x/2004
+0.08    12/08/2004
         - Tests were found to fail on AIX which contained eval{}, all
           tests updated with eval "".
         - Added a default value for dirmode in update_mirror based on
