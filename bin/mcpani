@@ -1,0 +1,267 @@
+#!/usr/bin/perl -w
+
+use strict;
+use Pod::Usage 1.12;
+use Getopt::Long;
+use CPAN::Mini::Inject;
+
+our $VERSION = '0.02';
+our %options=();
+
+sub print_version {
+  printf("SCRIPTNAME v%s, using CPAN::Mini::Inject v%s and Perl v%vd\n", $VERSION, $CPAN::Mini::Inject::VERSION, $^V);
+}
+
+sub chkactions {
+  foreach my $action (qw(add update mirror inject)) {
+    return 1 if($options{actionname} eq $action)
+  }
+  return 0;
+}
+
+sub setsub {
+  $options{actionname}=shift;
+  $options{action}=shift;
+}
+
+sub add {
+  my $mcpi=shift;
+
+  $mcpi->readlist
+       ->add( module => $options{module},
+              authorid => $options{authorid},
+              version => $options{version},
+              file => $options{file} )
+       ->writelist;
+
+  if($options{verbose}) {
+    print "\nAdding module: $options{module}\n";
+    print "Author ID: $options{authorid}\n";
+    print "Version: $options{version}\n";
+    print "File: $options{file}\n";
+    print "To repository: $mcpi->{config}{repository}\n\n";
+  }
+}
+
+sub update {
+  my $mcpi=shift;
+
+  mirror($mcpi);
+  inject($mcpi);
+}
+
+sub mirror {
+  my $mcpi=shift;
+  my %mirroropts;
+
+  $mirroropts{remote}=$options{remote} if(defined($options{remote}));
+  $mirroropts{local}=$options{local} if(defined($options{local}));
+  $mirroropts{trace}=$options{verbose} if(defined($options{verbose}));
+
+  $mcpi->update_mirror( %mirroropts );
+}
+
+sub inject {
+  my $mcpi=shift;
+
+  print "Injecting modules from $mcpi->{config}{repository}\n" if($options{verbose});
+  $mcpi->inject;
+}
+
+# MAIN
+Getopt::Long::Configure('no_ignore_case');
+Getopt::Long::Configure('bundling');
+
+GetOptions(
+    'h|help|?'      => sub {pod2usage({-verbose => 1, -input => \*DATA}); exit},
+    'H|man'         => sub {pod2usage({-verbose => 2, -input => \*DATA}); exit},
+    'V|version'     => sub { print_version(); exit; },
+    'v|verbose'     => \$options{verbose},
+    'l|local=s'     => \$options{local},
+    'r|remote=s'    => \$options{remote},
+    'add'           => sub { setsub('add',\&add) },
+    'update'        => sub { setsub('update',\&update) },
+    'mirror'        => sub { setsub('mirror',\&mirror) },
+    'inject'        => sub { setsub('inject',\&inject) },
+    'module=s'      => \$options{module},
+    'authorid=s'    => \$options{authorid},
+    'modversion=s'  => \$options{version},
+    'file=s'        => \$options{file},
+  ) or exit 1;
+
+
+unless(defined($options{action}) && chkactions()) {
+  pod2usage({-verbose => 1, -input => \*DATA});
+  exit;
+}
+
+my $mcpi=CPAN::Mini::Inject->new 
+                           ->loadcfg($options{cfg})
+                           ->parsecfg;
+
+&{$options{action}}($mcpi);
+
+__END__
+
+=head1 NAME
+
+mcpani -- A command line tool to manage a CPAN Mini Mirror.
+
+=head1 SYNOPSIS
+
+mcpani [options] < --add | --update | --mirror | --inject >
+
+Commands:
+
+    --add               Add a new package to the repository
+          --module      Name of the module to add
+          --authorid    Author ID of the module
+          --modversion  Version number of the module
+          --file        tar.gz file of the module
+
+    --update            Update local CPAN mirror and inject modules
+    --mirror            Update local CPAN mirror from remote
+    --inject            Add modules from repository to CPAN mirror
+
+Options:
+
+    -h, --help          This synopsis
+    -H, --man           Detailed description
+
+    -l, --local         local location for CPAN::Mini Mirror
+    -r, --remote        CPAN mirror to mirror from
+    -v, --verbose       verbose output
+    -V, --version       Version information.
+
+
+=head1 OVERVIEW
+
+F<mcpani> is a command-line brief description goes here.
+
+=head1 COMMAND LINE OPTIONS
+
+=head2 --add
+
+Add a module to the repository for later inclusion in the CPAN Mini
+mirror. The add command requires the follow parameters:
+
+=over 4
+
+=item --module
+
+This is the package name of the module.
+
+=item --authorid
+
+A CPAN 'like' author ID for the module. The author ID does not need to
+exist on CPAN.
+
+=item --modversion
+
+Version number of the module. This must match the version number in the 
+file name.
+
+=item --file
+
+File name and path of the module. The file name must follow the
+standard CPAN naming convention (the resulting file from a 
+C<make tardist>).
+
+=back
+
+  Example:
+
+  mcpani --add --module CPAN::Mini::Inject --authorid SSORICHE
+         --modversion 0.01 file ./CPAN-Mini-Inject-0.01.tar.gz
+
+
+=head2 --update
+
+Update the local CPAN Mini mirror from remote then inject the modules
+in the repository. This is the same as running C<mcpani --mirror> then
+C<mcpani --inject>
+
+=head2 --mirror
+
+Update the local CPAN Mini mirror from CPAN.
+
+=head2 --inject
+
+Add the repository modules into the CPAN Mini mirror.
+
+=head2 -l, --local
+
+A local directory to store the CPAN Mini mirror in. Specifying this
+option overides the value in the config file.
+
+=head2 -r, --remote
+
+A CPAN site to create the local CPAN Mini mirror from.
+
+=head2 -v, --verbose
+  
+Display verbose processing information
+
+=head2 -V, --version
+
+Display version information.
+
+=head1 CONFIGURATION FILE
+
+F<mcpani> uses a simple configuration file in the following format:
+
+ local: /www/CPAN
+ remote: ftp://ftp.cpan.org/pub/CPAN ftp://ftp.kernel.org/pub/CPAN
+ repository: /work/mymodules
+ passive: yes
+
+Description of options:
+
+=over 4
+
+=item * local 
+
+location to store local CPAN::Mini mirror (*REQUIRED*)
+
+=item * remote 
+
+CPAN site(s) to mirror from. Multiple sites can be listed space separated. 
+(*REQUIRED*)
+
+=item * repository
+
+Location to store modules to add to the local CPAN::Mini mirror.
+
+=item * passive
+
+Enable passive FTP.
+
+=back
+
+F<mcpani> will search the following four places in order:
+
+=over 4
+
+=item * file pointed to by the environment variable MCPANI_CONFIG
+
+=item * $HOME/.mcpani/config
+
+=item * /usr/local/etc/mcpani
+
+=item * /etc/mcpani
+
+=back 
+
+=head1 AUTHOR
+
+Shawn Sorichetti C<< <ssoriche@coloredblocks.net> >>
+
+=head1 Copyright & License
+
+Copyright 2004 Shawn Sorichetti, All Rights Reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=cut
+
