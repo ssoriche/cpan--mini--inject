@@ -1,4 +1,4 @@
-use Test::More tests => 7;
+use Test::More tests => 6;
 
 use CPAN::Mini::Inject;
 
@@ -14,11 +14,3 @@ $mcpi->parsecfg('t/.mcpani/config');
 is($mcpi->{config}{local},'t/local/CPAN');
 is($mcpi->{config}{remote},'http://www.cpan.org');
 is($mcpi->{config}{repository},'t/local/MYCPAN');
-
-SKIP: {
-  eval { use Test::Exception };
-  skip "Test::Exception not installed", 2 if $@;
-
-  $mcpi->loadcfg('t/.mcpani/config_bad');
-  dies_ok {$mcpi->parsecfg} 'Missing config option';
-}

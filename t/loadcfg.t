@@ -1,4 +1,4 @@
-use Test::More tests => 4;
+use Test::More tests => 3;
 
 use CPAN::Mini::Inject;
 use Env;
@@ -21,14 +21,6 @@ if(defined($ENV{MCPANI_CONFIG})) {
 }
 
 my $mcpi=CPAN::Mini::Inject->new;
-SKIP: {
-  skip 'Config file exists', 1 if(chkcfg());
-
-  eval { use Test::Exception };
-  skip 'Test::Exception not installed',1 if $@;
-
-  dies_ok {$mcpi->loadcfg} 'No config file';
-}
 
 $mcpi->loadcfg('t/.mcpani/config');
 is($mcpi->{cfgfile},'t/.mcpani/config');

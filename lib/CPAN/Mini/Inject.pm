@@ -161,6 +161,7 @@ sub parsecfg {
 
   my %required=( local => 1, remote => 1 );
 
+  delete $self->{cfgfile} if($cfgfile);
   $self->loadcfg($cfgfile) unless($self->{cfgfile});
 
   if(-r $self->{cfgfile}) {
@@ -172,7 +173,7 @@ sub parsecfg {
     }
     close(CFGFILE);
 
-    croak 'Required parameter(s): '.join(' ',keys(%required)) if(keys(%required));
+    croak 'Required parameter(s): '.join(' ',keys(%required)).' missing.' if(keys(%required));
   }
   return $self;
 }

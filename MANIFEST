@@ -30,3 +30,4 @@ t/read/MYCPAN/test-0.01.tar.gz
 t/readlist.t
 t/testremote.t
 t/writelist.t
+t/zz.exceptions.t

@@ -1,4 +1,4 @@
-use Test::More tests => 3;
+use Test::More tests => 2;
 
 use CPAN::Mini::Inject;
 use File::Path;
@@ -24,18 +24,7 @@ $mcpi->loadcfg('t/.mcpani/config')
 
 is(@{$mcpi->{modulelist}},3,'Read modulelist');
 
-SKIP: {
-  eval  { use Test::Exception };
-  skip 'Test::Exception not installed', 1 if $@;
-  skip 'User is superuser and can always read', 1 if $< == 0;
-
-  $mcpi=CPAN::Mini::Inject->new;
-  $mcpi->loadcfg('t/.mcpani/config_noread')
-       ->parsecfg;
-  dies_ok { $mcpi->readlist } 'unreadable file';
-}
 rmtree( [ 't/local/MYCPAN/modulelist' ],0,1);
-
 sub genmodlist {
   open(MODLIST,'>t/local/MYCPAN/modulelist') or die "Can not create t/local/MYCPAN/modulelist: $!";
   print MODLIST << "EOF"

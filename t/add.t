@@ -1,4 +1,4 @@
-use Test::More tests => 9;
+use Test::More tests => 5;
 
 use CPAN::Mini::Inject;
 use File::Path;
@@ -24,33 +24,5 @@ SKIP: {
 
 # XXX do the same test as above again, but this time with a ->readlist after
 # the ->parsecfg
-
-SKIP: {
-  eval { use Test::Exception };
-  skip "Test::Exception not installed", 2 if $@;
-
-  dies_ok { $mcpi->add( module => 'CPAN::Mini::Inject', authorid => 'SSORICHE', version => '0.01' ) } 'Missing add param';
-  dies_ok { $mcpi->add( module => 'CPAN::Mini::Inject', authorid => 'SSORICHE', version => '0.01', file => 'blahblah' ) } 'Module file not readable';
-}
-
-SKIP: {
-  eval { use Test::Exception };
-  skip "Test::Exception not installed", 1 if $@;
-
-  $mcpi->loadcfg('t/.mcpani/config_norepo')
-       ->parsecfg;
-
-  dies_ok { $mcpi->add( module => 'CPAN::Mini::Inject', authorid => 'SSORICHE', version => '0.01', file => 'test-0.01.tar.gz' ) } 'Missing config repository';
-}
-
-SKIP: {
-  eval { use Test::Exception };
-  skip "Test::Exception not installed", 1 if $@;
-
-  $mcpi->loadcfg('t/.mcpani/config_read')
-       ->parsecfg;
-
-  dies_ok { $mcpi->add( module => 'CPAN::Mini::Inject', authorid => 'SSORICHE', version => '0.01', file => 'test-0.01.tar.gz' ) } 'read-only repository';
-}
 
 rmtree('t/local/MYCPAN',1,1);

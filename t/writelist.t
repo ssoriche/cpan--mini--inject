@@ -1,4 +1,4 @@
-use Test::More tests => 3;
+use Test::More tests => 2;
 
 use CPAN::Mini::Inject;
 
@@ -19,16 +19,6 @@ push(@{$mcpi->{modulelist}},$module);
 is(@{$mcpi->{modulelist}},4,'Updated memory modulelist');
 ok($mcpi->writelist,'Write modulelist');
 
-SKIP: {
-  eval { use Test::Exception };
-  skip 'Test::Exception not installed', 1 if $@;
-  skip 'User is superuser and can always write', 1 if $< == 0;
-
-  $mcpi=CPAN::Mini::Inject->new;
-  $mcpi->loadcfg('t/.mcpani/config_nowrite')
-       ->parsecfg;
-  dies_ok { $mcpi->writelist } 'fail write file';
-}
 unlink('t/local/MYCPAN/modulelist');
 
 sub genmodlist {
