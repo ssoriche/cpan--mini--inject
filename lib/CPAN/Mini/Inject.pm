@@ -7,7 +7,6 @@ use Carp;
 use LWP::Simple;
 use File::Copy;
 use File::Basename;
-#use File::Path;
 use CPAN::Checksums qw(updatedir);
 use Compress::Zlib;
 use CPAN::Mini;
@@ -22,7 +21,7 @@ Version 0.08
 
 =cut
 
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 our @ISA=qw( CPAN::Mini );
 
 =head1 Synopsis
