@@ -18,11 +18,11 @@ CPAN::Mini::Inject - Inject modules into a CPAN::Mini mirror.
 
 =head1 Version
 
-Version 0.02
+Version 0.03
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 our @ISA=qw( CPAN::Mini );
 
 =head1 Synopsis
@@ -170,10 +170,13 @@ respond successfully is set as the instance variable site.
 
  print "$mcpi->{site}\n"; # ftp://ftp.cpan.org/pub/CPAN
 
+C<testremote> accepts an optional parameter to enable verbose mode.
+
 =cut
 
 sub testremote {
   my $self=shift;
+  my $verbose=shift;
 
   $self->{site}=undef if($self->{site});
 
@@ -182,8 +185,11 @@ sub testremote {
   foreach my $site (split(/\s+/,$self->_cfg('remote'))) {
     $site.='/' unless($site=~m/\/$/);
 
+    print "Testing site: $site\n" if($verbose);
+
     if(get($site.'authors/01mailrc.txt.gz')) {
       $self->{site}=$site;
+      print "\n$site selected.\n" if($verbose);
       last;
     }
   }
@@ -208,12 +214,13 @@ sub update_mirror {
 
   $ENV{FTP_PASSIVE}=1 if($self->_cfg('passive'));
 
-  $self->testremote unless($self->{site});
 
-  $options{remote}||=$self->{site};
   $options{local}||=$self->_cfg('local');
   $options{trace}||=0;
   $options{skip_perl}||=$self->_cfg('perl')||1;
+
+  $self->testremote($options{trace}) unless($self->{site});
+  $options{remote}||=$self->{site};
 
   ref($self)->SUPER::update_mirror( %options );
 }
