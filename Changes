@@ -6,6 +6,10 @@ Revision history for CPAN-Mini-Inject
         - Added a default value for dirmode in update_mirror based on
           umask.
         - Added a dirmode option to the config file.
+        - Fixed regex in mcpani to allow for developer version numbers
+          with add (ie. CPAN-Mini-Inject-0.07_001).
+        - Add a prereq for CPAN::Mini version 0.24. This version contains
+          a bugfix to properly handle dirmode. (Thanks RJBS).
 
 0.06    11/10/2004
 

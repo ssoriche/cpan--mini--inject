@@ -28,7 +28,7 @@ sub setsub {
 sub add {
   my $mcpi=shift;
 
-  if($options{file}=~/^(.*)-(\d+\.\d+)\.tar\.gz/) {
+  if($options{file}=~/^(.*)-([0-9._]+)\.tar\.gz/) {
     $options{module}||=$1;
     $options{version}||=$2;
 
