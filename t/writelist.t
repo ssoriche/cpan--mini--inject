@@ -22,6 +22,7 @@ ok($mcpi->writelist,'Write modulelist');
 SKIP: {
   eval  { use Test::Exception };
   skip 'Test::Exception not installed', 1 if $@;
+  skip 'User is superuser and can always write', 1 if $< == 0;
   use Test::Exception;
 
   $mcpi=CPAN::Mini::Inject->new;
