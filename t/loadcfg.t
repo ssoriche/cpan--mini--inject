@@ -23,8 +23,12 @@ if(defined($ENV{MCPANI_CONFIG})) {
 my $mcpi=CPAN::Mini::Inject->new;
 SKIP: {
   skip 'Config file exists', 1 if(chkcfg());
-  $mcpi->loadcfg;
-  is($mcpi->{cfgfile},undef);
+
+  eval { use Test::Exception };
+  skip 'Test::Exception not installed',1 if $@;
+  use Test::Exception;
+
+  dies_ok {$mcpi->loadcfg} 'No config file';
 }
 
 $mcpi->loadcfg('t/.mcpani/config');

@@ -97,6 +97,7 @@ sub loadcfg {
   my $self=shift;
   my $cfgfile=shift||_findcfg();
 
+  croak 'Unable to find config file' unless($cfgfile); 
   $self->{cfgfile}=$cfgfile;
   return $self;
 }
