@@ -1,37 +1,34 @@
-use Test::More tests => 2;
+use Test::More;
 
 use CPAN::Mini::Inject;
 use lib 't/lib';
-use LocalServer;
 
-sub writecfg {
-  my $remote=shift;
-  open(CFGFILE,'>t/testconfig');
-  print CFGFILE "remote: $remote\n";
-  print CFGFILE "local: t/local/CPAN\n";
-  print CFGFILE "repository: t/local/MYCPAN\n";
-  close(CFGFILE);
+BEGIN {
+  eval "use CPANServer";
+
+  plan skip_all => "HTTP::Server::Simple required to test update_mirror" if $@;
+  plan tests => 3;
 }
 
-my $server=LocalServer->spawn(file => 't/read/authors/01mailrc.txt.gz');
+my $server=CPANServer->new;
+my $pid=$server->background;
+ok($pid,'HTTP Server started');
 
-writecfg($server->url);
+$SIG{__DIE__} = sub { kill(9,$pid) };
 
 my $mcpi=CPAN::Mini::Inject->new;
-$mcpi->loadcfg('t/testconfig')
+$mcpi->loadcfg('t/.mcpani/config')
      ->parsecfg;
 
 $mcpi->testremote;
-is($mcpi->{site},$server->url);
+is($mcpi->{site},'http://localhost:8080/','Correct remote URL');
 
-writecfg("http://blahblah   ".$server->url);
-
-$mcpi->loadcfg('t/testconfig')
+$mcpi->loadcfg('t/.mcpani/config_badremote')
      ->parsecfg;
 
 $mcpi->testremote;
-is($mcpi->{site},$server->url);
+is($mcpi->{site},'http://localhost:8080/','Selects correct remote URL');
 
-$server->stop;
+kill(9,$pid);
 
 unlink('t/testconfig');

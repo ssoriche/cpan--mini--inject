@@ -11,7 +11,6 @@ use CPAN::Mini::Inject;
 use File::Path;
 use Env;
 use lib 't/lib';
-use LocalServer;
 
 sub chkcfg {
   return 1 if(-r '/usr/local/etc/mcpani');

@@ -1,5 +1,11 @@
 Revision history for CPAN-Mini-Inject
 
+0.18
+        - Fixed bug number 11718 involving the Line-Count in 
+          02packages.details.txt.gz not being updated.
+        - Added tests for update_mirror method.
+        - Migrated tests to HTTP::Server::Simple.
+
 0.16    01/08/2005
         - Decreased the size of t/read/authors/01mailrc.txt.gz reducing
           greatly the size of the package.

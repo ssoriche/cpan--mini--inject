@@ -15,11 +15,9 @@ t/.mcpani/config_nowrite
 t/00.load.t
 t/add.t
 t/inject.t
-t/lib/LocalServer.pm
 t/loadcfg.t
 t/local/CPAN/modules/02packages.details.txt.gz.bak
 t/local/mymodules/CPAN-Mini-Inject-0.01.tar.gz
-t/log-server
 t/new.t
 t/parsecfg.t
 t/pod-coverage.t
@@ -31,3 +29,14 @@ t/readlist.t
 t/testremote.t
 t/writelist.t
 t/zz.exceptions.t
+t/.mcpani/config_badremote
+t/html/01mailrc.txt.gz
+t/html/02packages.details.txt.gz
+t/html/03modlist.data.gz
+t/html/CHECKSUMS
+t/html/CPAN-Mini-2.1828.tar.gz
+t/html/CPAN-Mini-Inject-1.01.tar.gz
+t/lib/CPANServer.pm
+t/local/CPAN/modules/tmpfile
+t/local/WRITEREPO/modulelist
+t/update_mirror.t

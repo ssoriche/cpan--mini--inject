@@ -234,7 +234,7 @@ sub update_mirror {
   $options{trace}||=0;
   $options{skip_perl}||=$self->_cfg('perl')||1;
 
-  $self->testremote($options{trace}) unless($self->{site});
+  $self->testremote($options{trace}) unless($self->{site} || $options{remote});
   $options{remote}||=$self->{site};
 
   $options{dirmode}||=oct($self->_cfg('dirmode')||sprintf('0%o',0777 &~ umask()));
@@ -369,37 +369,45 @@ sub updpackages {
   my $self=shift;
 
   my @modules=sort(@{$self->{modulelist}});
-  my $cpanpackages=$self->_cfg('local').'/modules/02packages.details.txt.gz';
-  my $newpackages=$self->_cfg('repository').'/02packages.details.txt.gz';
 
-  my $gzread = gzopen($cpanpackages,'rb') 
-    or croak "Cannot open local 02packages.details.txt.gz: $gzerrno";
+  my $packages=$self->_readpkgs;
 
-  my $inheader=1;
-  my $gzwrite = gzopen($newpackages,'wb') 
-    or croak "Cannot open repository 02packages.details.txt.gz: $gzerrno";
-  while($gzread->gzreadline($_)) {
-    if($inheader) {
-      $inheader=0 unless(/\S/);
-      $gzwrite->gzwrite($_);
-      next;
-    }
+  $packages=_uniq($packages,\@modules);
 
-    if(defined($modules[0]) && lc($modules[0]) lt lc($_)) {
-      $gzwrite->gzwrite($modules[0]."\n");
-      shift(@modules);
-      redo;
-    }
-    if(defined($modules[0]) && lc($modules[0]) eq lc($_)) {
-      shift(@modules);
-      next;
-    }
-    $gzwrite->gzwrite($_);
-  }
-  $gzread->gzclose;
-  $gzwrite->gzclose;
-  copy($newpackages,$cpanpackages);
-  $self->_updperms($cpanpackages);
+  $self->_writepkgs($packages);
+
+#  my $gzread = gzopen($cpanpackages,'rb') 
+#    or croak "Cannot open local 02packages.details.txt.gz: $gzerrno";
+
+#  my $inheader=1;
+# my $gzwrite = gzopen($newpackages,'wb') 
+#   or croak "Cannot open repository 02packages.details.txt.gz: $gzerrno";
+# my $package;
+# while($gzread->gzreadline($package)) {
+#   if($inheader) {
+#     $inheader=0 unless(/\S/);
+#     $gzwrite->gzwrite($_);
+#     next;
+#   }
+
+#   if(defined($modules[0]) && lc($modules[0]) lt lc($package)) {
+#     $gzwrite->gzwrite($modules[0]."\n");
+#     push(@packages,shift(@modules));
+#     shift(@modules);
+#     redo;
+#   }
+#   if(defined($modules[0]) && lc($modules[0]) eq lc($package)) {
+#     shift(@modules);
+#     next;
+#   }
+#   $gzwrite->gzwrite($_);
+#   push(@packages,$package);
+# }
+
+# $gzread->gzclose;
+# $gzwrite->gzclose;
+# copy($newpackages,$cpanpackages);
+# $self->_updperms($cpanpackages);
 
 }
 
@@ -519,6 +527,72 @@ sub _fmtmodule {
 
 sub _cfg { 
   $_[0]->{config}{$_[1]} 
+}
+
+sub _readpkgs {
+  my $self=shift;
+
+  my $gzread = gzopen( $self->_cfg('local').
+                       '/modules/02packages.details.txt.gz',
+                       'rb') 
+    or croak "Cannot open local 02packages.details.txt.gz: $gzerrno";
+
+  my $inheader=1;
+  my @packages;
+  my $package;
+
+  while($gzread->gzreadline($package)) {
+    if($inheader) {
+      $inheader=0 unless($package=~/\S/);
+      next;
+    }
+    chomp($package);
+    push(@packages,$package);
+  }
+
+  $gzread->gzclose;
+
+  return \@packages;
+}
+
+sub _writepkgs {
+  my $self=shift;
+  my $pkgs=shift;
+
+  my $gzwrite = gzopen( $self->_cfg('local').
+                       '/modules/02packages.details.txt.gz',
+                       'wb') 
+    or croak "Can't open local 02packages.details.txt.gz for writing: $gzerrno";
+
+  $gzwrite->gzwrite("File:         02packages.details.txt\n");
+  $gzwrite->gzwrite("URL:          http://www.perl.com/CPAN/modules/02packages.details.txt\n");
+  $gzwrite->gzwrite('Description:  Package names found in directory $CPAN/authors/id/'."\n");
+  $gzwrite->gzwrite("Columns:      package name, version, path\n");
+  $gzwrite->gzwrite("Intended-For: Automated fetch routines, namespace documentation.\n");
+  $gzwrite->gzwrite("Written-By:   CPAN::Mini::Inject $VERSION\n");
+  $gzwrite->gzwrite("Line-Count:   ".scalar(@$pkgs)."\n");
+# Last-Updated: Sat, 19 Mar 2005 19:49:10 GMT
+  $gzwrite->gzwrite("Last-Updated: "._fmtdate()."\n\n");
+
+  $gzwrite->gzwrite("$_\n") for(@$pkgs);
+
+  $gzwrite->gzclose;
+
+}
+
+sub _uniq {
+  my ($list1,$list2)=@_;
+
+  my %combined=map { $_, undef } @$list1,@$list2;
+
+  my @fulllist=sort(keys(%combined));
+# return \@{sort(keys(%combined))};
+  return \@fulllist;
+}
+
+sub _fmtdate {
+  my @date=split(/\s+/,scalar(gmtime())); 
+  return "$date[0], $date[2] $date[1] $date[4] $date[3] GMT";
 }
 
 =head1 See Also

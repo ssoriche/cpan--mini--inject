@@ -25,4 +25,4 @@ SKIP: {
 # XXX do the same test as above again, but this time with a ->readlist after
 # the ->parsecfg
 
-rmtree('t/local/MYCPAN',1,1);
+rmtree('t/local/MYCPAN',0,1);

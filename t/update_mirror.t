@@ -1,5 +1,7 @@
 use Test::More;
 use File::Spec::Functions;
+use strict;
+use warnings;
 
 use lib catdir('t','lib');
 
@@ -12,6 +14,8 @@ BEGIN {
 
 use CPAN::Mini::Inject;
 use File::Path;
+
+rmtree( [ catdir('t','mirror') ], 0, 1);
 
 my $server=CPANServer->new;
 my $pid=$server->background;
@@ -39,21 +43,5 @@ ok(-e catfile(qw(t mirror authors id R RJ RJBS CHECKSUMS)),'RJBS CHECKSUMS');
 ok(-e catfile(qw(t mirror authors id R RJ RJBS CPAN-Mini-2.1828.tar.gz)),'CPAN::Mini');
 ok(-e catfile(qw(t mirror authors id S SS SSORICHE CHECKSUMS)),'SSORICHE CHECKSUMS');
 ok(-e catfile(qw(t mirror authors id S SS SSORICHE CPAN-Mini-Inject-1.01.tar.gz)),'CPAN::Mini::Inject');
-
-#my @updates=(
-#  catfile(qw(t mirror authors 01mailrc.txt.gz))."\n",
-#  catfile(qw(t mirror modules 02packages.details.txt.gz))."\n",
-#  catfile(qw(t mirror modules 03modlist.data.gz))."\n",
-#  catfile(qw(t mirror authors id R RJ RJBS/CPAN-Mini-2.1828.tar.gz))."\n",
-#  catfile(qw(t mirror authors id R RJ RJBS CHECKSUMS))."\n",
-#  catfile(qw(t mirror authors id S SS SSORICHE CPAN-Mini-Inject-1.01.tar.gz))."\n",
-#  catfile(qw(t mirror authors id S SS SSORICHE CHECKSUMS))."\n",
-#);
-
-#open(INFILE,catfile(qw(t mirror filelist)));
-#@filelist=<INFILE>;
-#close(INFILE);
-
-#is_deeply(\@updates,\@filelist,'Update file listing');
 
 rmtree( [ catdir('t','mirror') ], 0, 1);
