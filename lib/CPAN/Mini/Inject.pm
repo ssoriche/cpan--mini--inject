@@ -32,17 +32,16 @@ probably want to look at the mcpani command, instead.
     use CPAN::Mini::Inject;
 
     $mcpi=CPAN::Mini::Inject->new;
+    $mcpi->parsecfg('t/.mcpani/config');
 
-    $mcpi->loadcfg('t/.mcpani/config')
-         ->parsecfg
-         ->readlist
-         ->add( module => 'CPAN::Mini::Inject', 
+    $mcpi->add( module => 'CPAN::Mini::Inject', 
                 authorid => 'SSORICHE', 
                 version => ' 0.01', 
                 file => 'mymodules/CPAN-Mini-Inject-0.01.tar.gz' )
-         ->writelist
-         ->update_mirror
-         ->inject;
+
+    $mcpi->writelist;
+    $mcpi->update_mirror;
+    $mcpi->inject;
 
 =head1 Description
 
@@ -52,7 +51,13 @@ of private modules in a minimal CPAN mirror.
 
 =head1 Methods
 
-Each method in CPAN::Mini::Inject returns the object.
+Each method in CPAN::Mini::Inject returns a CPAN::Mini::Inject object which
+allows method chaining. For example:
+
+    my $mcpi=CPAN::Mini::Inject->new;
+    $mcpi->pasrsecfg
+         ->update_mirror
+         ->inject;
 
 =head2 new()
 
