@@ -114,6 +114,8 @@ parsecfg expects the config file in the following format:
  local: /www/CPAN
  remote: ftp://ftp.cpan.org/pub/CPAN ftp://ftp.kernel.org/pub/CPAN
  repository: /work/mymodules
+ passive: yes
+ dirmode: 0755
 
 Description of options:
 
@@ -135,6 +137,11 @@ Location to store modules to add to the local CPAN::Mini mirror.
 =item * passive
 
 Enable passive FTP.
+
+=item * dirmode
+
+Set the permissions of created directories to the specified mode. The default
+value is based on umask if supported.
 
 =back
 
@@ -222,6 +229,8 @@ sub update_mirror {
 
   $self->testremote($options{trace}) unless($self->{site});
   $options{remote}||=$self->{site};
+
+  $options{dirmode}||=oct($self->_cfg('dirmode')||sprintf('0%o',0777 &~ umask()));
 
   ref($self)->SUPER::update_mirror( %options );
 }

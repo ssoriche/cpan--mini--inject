@@ -1,5 +1,12 @@
 Revision history for CPAN-Mini-Inject
 
+0.07    11/2x/2004
+        - Tests were found to fail on AIX which contained eval{}, all
+          tests updated with eval "".
+        - Added a default value for dirmode in update_mirror based on
+          umask.
+        - Added a dirmode option to the config file.
+
 0.06    11/10/2004
 
         - mcpani now parses the file passed to it to determine module name
