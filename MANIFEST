@@ -37,6 +37,4 @@ t/html/CHECKSUMS
 t/html/CPAN-Mini-2.1828.tar.gz
 t/html/CPAN-Mini-Inject-1.01.tar.gz
 t/lib/CPANServer.pm
-t/local/CPAN/modules/tmpfile
-t/local/WRITEREPO/modulelist
 t/update_mirror.t
