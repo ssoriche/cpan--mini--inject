@@ -25,7 +25,7 @@ ok(-e "t/local/CPAN/authors/id/$module",'Module file exists');
 ok(-e 't/local/CPAN/authors/id/S/SS/SSORICHE/CHECKSUMS','Checksum created');
 
 SKIP: {
-  skip "Not a UNIX system", 3 if($^O =~ /^Win/);
+  skip "Not a UNIX system", 3 if($^O =~ /^MSWin/);
   is((stat("t/local/CPAN/authors/id/$module"))[2] & 07777,0664,'Module file mode set');
   is((stat(dirname("t/local/CPAN/authors/id/$module")))[2] & 07777,0775,'Author directory mode set');
   is((stat('t/local/CPAN/authors/id/S/SS/SSORICHE/CHECKSUMS'))[2] & 07777,0664,'Checksum file mode set');

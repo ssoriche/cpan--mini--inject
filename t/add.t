@@ -17,7 +17,7 @@ my $module="CPAN::Mini::Inject                 0.01  S/SS/SSORICHE/CPAN-Mini-Inj
 ok(grep(/$module/,@{$mcpi->{modulelist}}),'Module added to list');
 
 SKIP: {
-  skip "Not a UNIX system", 2 if($^O =~ /^Win/);
+  skip "Not a UNIX system", 2 if($^O =~ /^MSWin/);
   is((stat('t/local/MYCPAN/authors/id/S/SS/SSORICHE'))[2] & 07777,0775,'Added author directory mode is 0775');
   is((stat('t/local/MYCPAN/authors/id/S/SS/SSORICHE/CPAN-Mini-Inject-0.01.tar.gz'))[2] & 07777,0664,'Added module mode is 0664');
 }

@@ -1,5 +1,9 @@
 Revision history for CPAN-Mini-Inject
 
+0.12    01/03/2005
+        - Tests failed for inject and add on Windows systems. These tests
+          have now been skipped.
+
 0.10    12/30/2004
         - Fixed dirmode in inject(), add(), writelist(), so that all files
           created are set with the correct permissions.
