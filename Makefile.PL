@@ -14,8 +14,11 @@ WriteMakefile(
         'CPAN::Checksums' => 0,
         'CPAN::Mini' => 0.32,
         'Compress::Zlib' => 0,
+        'Archive::Tar' => 0,
+        'IO::Zlib' => 0,
+        'YAML' => 0,
         'HTTP::Server::Simple' => 0.07,
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
-    clean               => { FILES => 'CPAN-Mini-Inject-*' },
+    clean               => { FILES => 'CPAN-Mini-Inject-* t/local/WRITEREPO t/local/MYCPAN' },
 );

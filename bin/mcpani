@@ -3,10 +3,12 @@
 use strict;
 use Pod::Usage 1.12;
 use Getopt::Long;
+use YAML qw( Load ); 
+use Archive::Tar;
 use CPAN::Mini::Inject;
 use Env;
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 our %options=();
 
 sub print_version {
@@ -28,27 +30,67 @@ sub setsub {
 sub add {
   my $mcpi=shift;
 
-  if($options{file}=~/^(.*)-([0-9._]+)\.tar\.gz/) {
-    $options{module}||=$1;
-    $options{version}||=$2;
+  if($options{file}=~/([^\/]*)-([0-9._]+)\.tar\.gz$/) {
+      $options{module}||=$1;
+      $options{version}||=$2;
 
-    $options{module}=~s/-/::/g;
+      $options{module}=~s/-/::/g;
   }
 
-  $mcpi->readlist
-       ->add( module => $options{module},
+  $mcpi->readlist;
+
+
+  my @modules_to_add;
+  if( $options{'all-in-meta'} ) {
+    ## attempt to read the META.yml
+    my $meta_data = _load_meta( $options{file} );
+
+    my $provides  = $meta_data->{provides} || {};
+
+    if( !$provides ) {
+        warn("Could not find the 'provides' section in META.yml. "
+           . "Only adding based on provided command line.\n");
+    }
+
+    PROVIDE_ENTRY:
+    while ( my($name,$info) = each( %{ $provides } ) ) {
+        next PROVIDE_ENTRY if $name eq $options{module};
+        my $v = defined $info->{version} ?  $info->{version}
+              :                             'undef';
+
+        push @modules_to_add, {
+            version => $v,
+            module  => $name
+        };
+    }
+
+  }
+
+  # always add the module/version provided on the command line
+  # as well
+  push @modules_to_add, {
+      version => $options{version},
+      module  => $options{module},
+  };
+
+  $mcpi->readlist;
+  foreach my $item ( @modules_to_add ) {
+    $mcpi->add( module => $item->{module},
               authorid => $options{authorid},
-              version => $options{version},
-              file => $options{file} )
-       ->writelist;
+              version => $item->{version},
+              file => $options{file} );
 
-  if($options{verbose}) {
-    print "\nAdding module: $options{module}\n";
-    print "Author ID: $options{authorid}\n";
-    print "Version: $options{version}\n";
-    print "File: $options{file}\n";
-    print "To repository: $mcpi->{config}{repository}\n\n";
+    if($options{verbose}) {
+        print "\nAdding module: $item->{module}\n";
+        print "Author ID: $options{authorid}\n";
+        print "Version: $item->{version}\n";
+        print "File: $options{file}\n";
+        print "To repository: $mcpi->{config}{repository}\n\n";
+    }
   }
+  $mcpi->writelist;
+
+
 }
 
 sub update {
@@ -76,6 +118,32 @@ sub inject {
   $mcpi->inject($options{verbose});
 }
 
+sub _load_meta {
+  my $filename = shift;
+
+  print "Loading META.yml from $options{file}\n" if($options{verbose});
+  my $tar = Archive::Tar->new();
+  $tar->read($filename);
+  
+  my $meta_filename;
+  
+  FILE_LIST:
+  foreach my $name ( $tar->list_files() ) {
+      if( $name =~ /META\.yml$/ ) {
+          $meta_filename = $name;
+          last FILE_LIST;
+      }
+  }
+  
+  if($meta_filename) {
+      return Load( $tar->get_content( $meta_filename ) );
+  }
+  
+  warn("Could not load the META.yml from file $options{file}");
+  return {};
+
+}
+
 # MAIN
 Getopt::Long::Configure('no_ignore_case');
 Getopt::Long::Configure('bundling');
@@ -96,6 +164,7 @@ GetOptions(
     'authorid=s'    => \$options{authorid},
     'modversion=s'  => \$options{version},
     'file=s'        => \$options{file},
+    'all-in-meta'   => \$options{'all-in-meta'},
   ) or exit 1;
 
 
@@ -126,6 +195,7 @@ Commands:
           --module      Name of the module to add
           --authorid    Author ID of the module
           --modversion  Version number of the module
+          --all-in-meta parse all modules in the META.yml
           --file        tar.gz file of the module
 
     --update            Update local CPAN mirror and inject modules
@@ -170,6 +240,18 @@ exist on CPAN.
 
 Version number of the module. This must match the version number in the 
 file name.
+
+=item --all-in-meta
+
+This option will add every module listed in the 'provides' section of 
+the META.yml contained in the tar.gz provided by the --file option.
+
+The options --module and --modversion are still recognized.  If the
+same module/version is found in the META.yml it is not duplicated.
+
+If the META.yml file or the 'provides' section is missing, then 
+a warning is issued and the only module added is the one provided by
+--module / --modversion.
 
 =item --file
 

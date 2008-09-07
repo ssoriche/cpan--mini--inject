@@ -1,5 +1,24 @@
 Revision history for CPAN-Mini-Inject
 
+0.22    06/25/2008
+        - fixed a bug where authors were being added
+          more than once to 01mailrc.txt.gz
+
+0.21    06/25/2008
+        - changes for RT bug 17386 by: David Bartle
+
+0.20    06/25/2008
+        - added a command line option '--all-in-meta' which will
+          parse the META.yml and index every module listed in the
+          'provides' section
+        - module name and version is now parsed correctly from the 
+          filename if relative or absolute paths are specified
+        - changes for RT bug 37093 by: David Bartle
+
+0.18.1  06/25/2008
+        - Fixed bug number 28363
+          http://rt.cpan.org/Ticket/Display.html?id=28363
+
 0.18    04/02/2005
         - Fixed bug number 11718 involving the Line-Count in 
           02packages.details.txt.gz not being updated.

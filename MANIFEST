@@ -17,6 +17,7 @@ t/add.t
 t/inject.t
 t/loadcfg.t
 t/local/CPAN/modules/02packages.details.txt.gz.bak
+t/local/01mailrc.txt.gz.bak
 t/local/mymodules/CPAN-Mini-Inject-0.01.tar.gz
 t/new.t
 t/parsecfg.t
@@ -30,6 +31,7 @@ t/testremote.t
 t/writelist.t
 t/zz.exceptions.t
 t/.mcpani/config_badremote
+t/html/index.html
 t/html/01mailrc.txt.gz
 t/html/02packages.details.txt.gz
 t/html/03modlist.data.gz

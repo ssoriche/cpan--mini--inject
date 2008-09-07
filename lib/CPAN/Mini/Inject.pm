@@ -21,7 +21,7 @@ Version 0.18
 
 =cut
 
-our $VERSION = '0.18';
+our $VERSION = '0.22';
 our @ISA=qw( CPAN::Mini );
 
 =head1 Synopsis
@@ -354,6 +354,7 @@ sub inject {
   }
 
   $self->updpackages;
+  $self->updauthors;
 
   return $self;
 }
@@ -376,38 +377,42 @@ sub updpackages {
 
   $self->_writepkgs($packages);
 
-#  my $gzread = gzopen($cpanpackages,'rb') 
-#    or croak "Cannot open local 02packages.details.txt.gz: $gzerrno";
+}
 
-#  my $inheader=1;
-# my $gzwrite = gzopen($newpackages,'wb') 
-#   or croak "Cannot open repository 02packages.details.txt.gz: $gzerrno";
-# my $package;
-# while($gzread->gzreadline($package)) {
-#   if($inheader) {
-#     $inheader=0 unless(/\S/);
-#     $gzwrite->gzwrite($_);
-#     next;
-#   }
+=head2 updauthors()
 
-#   if(defined($modules[0]) && lc($modules[0]) lt lc($package)) {
-#     $gzwrite->gzwrite($modules[0]."\n");
-#     push(@packages,shift(@modules));
-#     shift(@modules);
-#     redo;
-#   }
-#   if(defined($modules[0]) && lc($modules[0]) eq lc($package)) {
-#     shift(@modules);
-#     next;
-#   }
-#   $gzwrite->gzwrite($_);
-#   push(@packages,$package);
-# }
+Update the CPAN::Mini mirror's authors/01mailrc.txt.gz with
+stub information should the author not actually exist on CPAN
 
-# $gzread->gzclose;
-# $gzwrite->gzclose;
-# copy($newpackages,$cpanpackages);
-# $self->_updperms($cpanpackages);
+=cut
+
+sub updauthors {
+  my $self=shift;
+
+  my $repo_authors = $self->_readauthors;
+  my %author_ids_in_repo = map{
+    my ($id) = $_ =~ /alias \s+ (\S+)/xms;
+    $id => 1;
+  } @$repo_authors;
+
+  my @authors;
+  my %authors_added;
+  AUTHOR:
+  foreach my $modline (@{$self->{modulelist}}) {
+    my ($module,$version,$file)=split(/\s+/,$modline);
+    my $author = ( split("/",$file,4) )[2]; # extract the author from the path
+
+    next AUTHOR if defined $author_ids_in_repo{$author};
+    next AUTHOR if defined $authors_added{$author};
+
+    push @$repo_authors, sprintf(
+        'alias %-10s "Custom Non-CPAN author <CENSORED>"',
+        $author
+    );
+    $authors_added{$author} = 1;
+  }
+
+  $self->_writeauthors($repo_authors);
 
 }
 
@@ -580,6 +585,41 @@ sub _writepkgs {
 
 }
 
+sub _readauthors {
+  my $self=shift;
+  my $gzread = gzopen( $self->_cfg('local').
+                       '/authors/01mailrc.txt.gz',
+                       'rb') 
+    or croak "Cannot open ".$self->_cfg('local')."/authors/01mailrc.txt.gz: $gzerrno";
+
+  my @authors;
+  my $author;
+
+  while($gzread->gzreadline($author)) {
+    chomp($author);
+    push(@authors,$author);
+  }
+
+  $gzread->gzclose;
+
+  return \@authors;
+}
+
+sub _writeauthors {
+  my $self=shift;
+  my $authors=shift;
+
+  my $gzwrite = gzopen( $self->_cfg('local').
+                       '/authors/01mailrc.txt.gz',
+                       'wb') 
+    or croak "Can't open local authors/01mailrc.txt.gz for writing: $gzerrno";
+
+  $gzwrite->gzwrite("$_\n") for(sort @$authors);
+
+  $gzwrite->gzclose;
+
+}
+
 sub _uniq {
   my ($list1,$list2)=@_;
 
@@ -603,6 +643,11 @@ L<CPAN::Mini>
 
 Shawn Sorichetti, C<< <ssoriche@coloredblocks.net> >>
 
+=head1 Acknowledgements
+
+Special thanks to David Bartle, for bringing this module up
+to date, and resolving the reported bugs.
+
 =head1 Bugs
 
 Please report any bugs or feature requests to
@@ -612,7 +657,7 @@ be notified of progress on your bug as I make changes.
 
 =head1 Copyright & License
 
-Copyright 2004 Shawn Sorichetti, All Rights Reserved.
+Copyright 2008 Shawn Sorichetti, All Rights Reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
