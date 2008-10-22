@@ -1,5 +1,7 @@
 Revision history for CPAN-Mini-Inject
 
+0.22 - Tue Oct 21 21:45:50 2008
+
 0.22    06/25/2008
         - fixed a bug where authors were being added
           more than once to 01mailrc.txt.gz
