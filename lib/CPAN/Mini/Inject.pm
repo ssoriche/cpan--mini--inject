@@ -639,9 +639,11 @@ sub _fmtdate {
 
 L<CPAN::Mini>
 
+L<<a href="http://github.com/ssoriche/cpan--mini--inject/tree/master">Source Repository</a>>
+
 =head1 Author
 
-Shawn Sorichetti, C<< <ssoriche@coloredblocks.net> >>
+Shawn Sorichetti, C<< <ssoriche@cpan.org> >>
 
 =head1 Acknowledgements
 
