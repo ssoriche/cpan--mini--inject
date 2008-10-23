@@ -2,7 +2,6 @@ Changes
 MANIFEST
 MANIFEST.SKIP
 README
-META.yml # Will be created by "make dist"
 Makefile.PL
 TODO
 bin/mcpani
